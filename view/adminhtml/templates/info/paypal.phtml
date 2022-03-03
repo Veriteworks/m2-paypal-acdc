@@ -1,0 +1,14 @@
+<?php /** @var \Veriteworks\Paypal\Block\Info\Paypal $this */?>
+<p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></strong></p>
+<?php if ($_specificInfo = $this->getSpecificInformation()) :?>
+    <table>
+        <?php foreach ($_specificInfo as $_label => $_value) :?>
+            <tr>
+                <td><?php echo $this->escapeHtml($_label)?>:</td>
+                <td><?php echo $_value; ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif;?>
+
+<?php echo $this->getChildHtml()?>

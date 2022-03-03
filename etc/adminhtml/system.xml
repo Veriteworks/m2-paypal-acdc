@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="veriteworks_paypal" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+                <label>Veriteworks Paypal</label>
+                <frontend_model>Veriteworks\Paypal\Block\Adminhtml\System\Config\Fieldset\Group</frontend_model>
+                <attribute type="activity_path">payment/veriteworks_paypal/active</attribute>
+                <field id="merchant_id" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Merchant ID</label>
+                    <config_path>payment/veriteworks_paypal/merchant_id</config_path>
+                </field>
+                <field id="merchant_password" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Merchant Password</label>
+                    <config_path>payment/veriteworks_paypal/merchant_password</config_path>
+                </field>
+                <field id="access_token" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Access Token</label>
+                    <config_path>payment/veriteworks_paypal/access_token</config_path>
+                </field>
+                <field id="is_test" type="select" translate="label" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Test Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/veriteworks_paypal/is_test</config_path>
+                </field>
+                <field id="payment_action" type="select" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Auth Type</label>
+                    <source_model>Veriteworks\Paypal\Model\Source\PaymentAction</source_model>
+                    <config_path>payment/veriteworks_paypal/payment_action</config_path>
+                </field>
+                <field id="title" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                    <config_path>payment/veriteworks_paypal/title</config_path>
+                </field>
+                <field id="active" type="select" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/veriteworks_paypal/active</config_path>
+                </field>
+                <field id="name" translate="label" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Site Name</label>
+                    <config_path>payment/veriteworks_paypal/name</config_path>
+                </field>
+                <field id="reason" type="textarea" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Refund Reason</label>
+                    <config_path>payment/veriteworks_paypal/reason</config_path>
+                </field>
+                <field id="min_order_total" translate="label" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum Order Total</label>
+                    <config_path>payment/veriteworks_paypal/min_order_total</config_path>
+                </field>
+                <field id="max_order_total" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Maximum Order Total</label>
+                    <config_path>payment/veriteworks_paypal/max_order_total</config_path>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <config_path>payment/veriteworks_paypal/sort_order</config_path>
+                </field>
+                <field id="debug" type="select" translate="label" sortOrder="999" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/veriteworks_paypal/debug</config_path>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

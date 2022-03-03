@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>My Example Page</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block template="Veriteworks_Paypal::test.phtml" class="Magento\Framework\View\Element\Template" name="veriteworks_test"/>
+        </referenceContainer>
+    </body>
+</page>

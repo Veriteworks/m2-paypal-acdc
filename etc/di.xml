@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Veriteworks\Paypal\Api\PostManagementInterface" type="Veriteworks\Paypal\Model\PostManagement"/>
+    <!-- Define Logger -->
+    <type name="Veriteworks\Paypal\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Veriteworks\Paypal\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">paypalLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Veriteworks\Paypal\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Veriteworks\Paypal\Gateway\Http\Client">
+        <arguments>
+            <argument name="adapter" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Adapter\Paypal</argument>
+        </arguments>
+    </type>
+
+    <!-- Paypal start -->
+    <virtualType name="PaypalFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Veriteworks\Paypal\Gateway\Config\Paypal::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Veriteworks\Paypal\Block\Form\Paypal</argument>
+            <argument name="infoBlockType" xsi:type="string">Veriteworks\Paypal\Block\Info\Paypal</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PaypalValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PaypalValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PaypalCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaypalConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Veriteworks\Paypal\Model\Config\PaypalProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Veriteworks\Paypal\Gateway\Config\Paypal">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Veriteworks\Paypal\Model\Config\PaypalProvider::CODE</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="PaypalConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PaypalConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaypalValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PaypalConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaypalValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="currency" xsi:type="string">PaypalCurrencyValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaypalCurrencyValidator" type="Veriteworks\Paypal\Gateway\Validator\MultiCurrencyValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">Veriteworks\Paypal\Gateway\Config\Paypal</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaypalCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">PaypalAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">PaypalCaptureCommandStrategy</item>
+                <item name="sale" xsi:type="string">PaypalSaleCommand</item>
+                <item name="settlement" xsi:type="string">PaypalCaptureCommand</item>
+<!--                <item name="refund" xsi:type="string">PaypalRefundCommand</item>-->
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!--  authorize start  -->
+    <virtualType name="PaypalAuthorizeCommand" type="Veriteworks\Paypal\Gateway\Command\AuthCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PaypalAuthorizeRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+            <argument name="handler" xsi:type="object">PaypalAuthorizeHandler</argument>
+            <argument name="validator" xsi:type="object">Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PaypalAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="payment" xsi:type="string">Veriteworks\Paypal\Gateway\Request\Paypal\AuthBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PaypalAuthorizeHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="payment_details" xsi:type="string">Veriteworks\Paypal\Gateway\Response\PaymentDetailsHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!--  authorize end  -->
+
+    <!--  capture strategy start  -->
+    <virtualType name="PaypalCaptureCommandStrategy" type="Veriteworks\Paypal\Gateway\Command\CaptureCommandStrategy">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PaypalCommandPool</argument>
+            <argument name="key" xsi:type="string">payment/veriteworks_paypal/</argument>
+        </arguments>
+    </virtualType>
+    <!--  capture strategy end  -->
+
+    <!--  sale start  -->
+    <virtualType name="PaypalSaleCommand" type="Veriteworks\Paypal\Gateway\Command\AuthCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PaypalAuthorizeRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+            <argument name="handler" xsi:type="object">PaypalHandler</argument>
+            <argument name="validator" xsi:type="object">Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator</argument>
+        </arguments>
+    </virtualType>
+    <!--  sale end  -->
+
+    <!--  settlement start  -->
+    <virtualType name="PaypalCaptureCommand" type="Veriteworks\Paypal\Gateway\Command\CaptureCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PaypalCaptureRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+            <argument name="handler" xsi:type="object">PaypalCaptureHandler</argument>
+            <argument name="validator" xsi:type="object">Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PaypalCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="payment" xsi:type="string">Veriteworks\Paypal\Gateway\Request\Paypal\CaptureBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PaypalCaptureHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="capture_handler" xsi:type="string">Veriteworks\Paypal\Gateway\Response\CaptureHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!--  settlement end  -->
+
+    <!--  get token cron start  -->
+    <type name="Veriteworks\Paypal\Cron\Token">
+        <arguments>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+        </arguments>
+    </type>
+    <!--  get token cron end  -->
+
+</config>

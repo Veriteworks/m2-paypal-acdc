@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <container name="root">
+        <block template="Veriteworks_Paypal::paypal.phtml" class="Magento\Framework\View\Element\Template" name="veriteworks_redirect" cacheable="false"/>
+    </container>
+</layout>

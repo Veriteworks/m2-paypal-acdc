@@ -1,0 +1,121 @@
+Help,ヘルプ
+Configure,設定
+Close,閉じる
+"Learn More","もっと詳しく"
+"Bank Code","金融機関コード"
+"Confirm Number","確認番号"
+"Bill Pattern","お支払パターン"
+"Payment URL","お支払ページURL"
+"<a href=""%1"" target=""_blank"">Go to payment page</a>","<a href=""%1"" target=""_blank"">お支払ページ</a>"
+"Payment limit date","お支払い期限日"
+"CVS name","コンビニチェーン名"
+"Receipt Number","受付番号"
+"3D Secure authorization success.","3Dセキュア認証が成功しました。"
+"Unable to place order. Please try again later.","ご注文を確定できません。後ほどやり直してください。"
+"3D Secure authorization success.","3Dセキュア認証成功。"
+"There is no request body in this HTTP request.","HTTPリクエストにボディ部がありません。"
+"There is no Content-Hmac in this HTTP header.","HTTPヘッダーにContent-Hmacがありません。"
+"No match information.","一致する情報はありません。"
+"Union payment authorization success.","銀聯与信成功"
+"Transaction has been declined. Please try again later.","トランザクションが拒否されました。後ほどやり直してください。"
+"No authorization transaction to proceed capture.","キャプチャできる与信トランザクションがありません。"
+"No authorization transaction to proceed void.","無効にできる与信トランザクションがありません。"
+"Invalid order information was provided.","不正な注文情報が与えられました。"
+"Wrong transaction status","不正なトランザクションステータス"
+"Order was payed successfully.","注文が支払われました。"
+"Union payment process was failed.","銀聯決済処理が失敗しました。"
+No,No
+Yes,Yes
+ATM,ATM
+NetBank,ネットバンク
+"NetBank Docomo","ネットバンク Docomo"
+"NetBank Softbank","ネットバンク Softbank"
+"NetBank au","ネットバンク au"
+Visa,Visa
+"Master Card","Master Card"
+JCB,JCB
+"American Express","American Express"
+Diners,Diners
+SevenEleven,セブン・イレブン
+Lawson,ローソン
+FamilyMart,ファミリーマート
+Sunkus,サンクス
+CircleK,サークルK
+MiniStop,ミニストップ
+DailyYamazaki,デイリーヤマザキ
+Seico-Mart,セイコーマート
+"days after","日後"
+"Authorize Only","与信のみ"
+"Authorize and Capture","与信売上同時"
+"One Time","1回"
+Split,分割
+Bonus,ボーナス
+Rebo,リボ
+"Don't allow non-3D secure card","3Dセキュア非対応カードを許可しない"
+"Allow non-3D secure card as processor risk","3Dセキュア非対応カードを許可する（カード会社リスク負担）"
+"Allow non-3D secure card as merchant risk","3Dセキュア非対応カードを許可しない（加盟店リスク負担）"
+"10Times","10回"
+"12Times","12回"
+"15Times","15回"
+"18Times","18回"
+"20Times","20回"
+"24Times","24回"
+"2Times","2回"
+"3Times","3回"
+"5Times","5回"
+"6Times","6回"
+"Credit Card Type","カードブランド"
+"--Please Select--","--選択してください--"
+"Credit Card Number","カード番号"
+"Expiration Date","有効期限"
+"Card Verification Number","セキュリティコード"
+"Card Verification Number Visual Reference","セキュリティコードとは"
+"What is this?","セキュリティコードについて?"
+"Switch/Solo/Maestro Only","Switch/Solo/Maestroのみ"
+"Place Order","注文確定"
+"Service Name","サービス名"
+"Credit Card Information","カード情報"
+"Installments Payment","支払方法"
+"Payment Times","支払回数"
+"CVS Name","コンビニ名"
+"Please confirm your credit card information.","カード情報を確認してください。"
+"Merchant ID","マーチャントID"
+"Merchant Password","マーチャントパスワード"
+"Multi Currency Merchant ID","多通貨マーチャントID"
+"Muti Currency Merchant Password","多通貨マーチャントパスワード"
+"Enable trAd Program","Enable trAd Program"
+"Test Mode","テストモード"
+Title,タイトル
+Enabled,有効
+"Product Name","商品名"
+"Refund Reason","返金理由"
+"Bank payment","銀行振込"
+"Bank Types","金融機関種別"
+"Pay Limit Date","支払期限日"
+Contact,連絡先
+"Contact Kana","連絡先カナ"
+"Maximum Order Total","最大注文金額"
+"Minimum Order Total","最小注文金額"
+"Sort Order","表示順"
+Debug,デバッグ
+"Credit Card","クレジットカード"
+"Auth Type","認証方法"
+"Use 3D Secure","3Dセキュアを使用"
+"3D Secure Auth Type","3Dセキュア認証方式"
+"Enable Automatic Payment Review Order Removing","支払いレビュー中注文の自動削除"
+"Token API Key","トークンAPIキー"
+"Credit Card Types","カードブランド"
+"Payment Types","支払い方法"
+"Split Count","分割回数"
+"Multi Currency Credit Card","多通貨クレジットカード"
+"Available Currency","利用可能通貨"
+"Convenience store payment","コンビニ番号決済"
+"CVS Types","コンビニチェーン"
+"Union Payment","銀聯決済"
+"Use latest used card","前回使用したカードを使用する"
+"Your name contains invalid characters.","お名前にご利用頂けない文字が含まれています。"
+"Please set lastname.","姓を入力してください。"
+"Please set firstname.","名を入力してください。"
+"Please set lastname kana.","姓（カナ）を入力してください。"
+"Please set firstname kana.","名（カナ）を入力してください。"
+"Holder Name","カード保有者名"

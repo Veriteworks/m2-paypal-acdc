@@ -1,0 +1,38 @@
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()},
+                          value: getCode(),
+                          checked: isChecked,
+                          click: selectPaymentMethod,
+                          visible: isRadioButtonVisible()"/>
+        <label class="label" data-bind="attr: {'for': getCode()}"><span data-bind="text: getTitle()"></span></label>
+    </div>
+
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <button value="test" id="test" class="btn" data-bind="click: test">test</button>
+        <button value="paypal form" id="paypalForm" class="btn" data-bind="click: paypalForm">Pay with Card</button>
+        <form id="my-sample-form" data-bind="visible: isVisible()">
+            <label for="card-number">Card Number</label>
+            <div id="card-number"></div>
+
+            <label for="expiration-date">Expiration Date</label>
+            <div id="expiration-date"></div>
+
+            <label for="cvv">CVV</label>
+            <div id="cvv"></div>
+
+            <button value="submit" id="submit" class="btn">Pay with Card</button>
+        </form>
+    </div>
+</div>

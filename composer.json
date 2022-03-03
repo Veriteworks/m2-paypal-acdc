@@ -1,0 +1,25 @@
+{
+    "name": "veriteworks/paypal",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "description": "Magento2 extension for Paypal.",
+    "version": "1.0.0",
+    "require": {
+        "php": "~7.3.0|~7.4.0",
+        "magento/module-store": "100.1.*|~100.2",
+        "magento/module-backend": "100.1.*|~100.2",
+        "magento/framework": "100.1.*|~101.0",
+        "veriteworks/base": "~1.0",
+        "lib-libxml": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Veriteworks\\Paypal\\": ""
+        }
+    }
+}
