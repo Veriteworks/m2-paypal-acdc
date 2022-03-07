@@ -33,17 +33,14 @@ class GeneralResponseValidator extends AbstractValidator
         $response = $this->subjectReader->readResponseObject($validationSubject);
         $isValid = true;
         $errorMessages = [];
-//        if (array_key_exists('mstatus', $response)
-//            && ($response['mstatus'] == 'success')
-//        ) {
-//            return $this->createResult($isValid, $errorMessages);
-//        } else {
-//            $resultCode = substr($response['vResultCode'], 0, 4);
-//            if ($resultCode != 'NH18') {
-//                $isValid = false;
-//                $errorMessages[] = $resultCode . ":" . $response['merrMsg'];
-//            }
-//        }
+        if (array_key_exists('code', $response)
+            && preg_match('/2\d{2}/', $response['code'])
+        ) {
+            return $this->createResult($isValid, $errorMessages);
+        } else {
+            $isValid = false;
+            $errorMessages[] = $response['code'] . ":" . $response['message'];
+        }
         return $this->createResult($isValid, $errorMessages);
     }
 }

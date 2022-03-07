@@ -19,15 +19,7 @@ class SubjectReader
      */
     public function readResponseObject(array $subject)
     {
-        $response = Helper\SubjectReader::readResponse($subject);
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($response);
-        if (!isset($response)) {
-            throw new \InvalidArgumentException('Response object does not exist');
-        }
-        return $response;
+        return $subject['response'];
     }
     /**
      * Reads payment from subject

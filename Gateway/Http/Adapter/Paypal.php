@@ -110,12 +110,15 @@ class Paypal implements AdapterInterface
                 } else {
                     $this->log(var_export($this->apiPath, true));
                     $this->log(var_export($response, true));
-                    $returnValue['ErrCode'] = 'network error';
+                    $returnValue['code'] = $response->getStatus();
+                    $returnValue['message'] = $response->getMessage();
                 }
             } else {
                 $this->log(var_export($this->apiPath, true));
                 $this->log(var_export($response, true));
                 $returnValue = json_decode($response->getBody(), true);
+                $returnValue['code'] = $response->getStatus();
+                $returnValue['message'] = $response->getMessage();
             }
         } catch (\Exception $e) {
             if ($this->retryCount < 3) {
@@ -124,7 +127,8 @@ class Paypal implements AdapterInterface
             } else {
                 $this->log(var_export($this->apiPath, true));
                 $this->log(var_export($response, true));
-                $returnValue['ErrCode'] = 'network error';
+                $returnValue['code'] = $response->getStatus();
+                $returnValue['message'] = $response->getMessage();
             }
         }
         return $returnValue;

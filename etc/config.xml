@@ -13,15 +13,15 @@
                 <can_initialize>0</can_initialize>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
-                <can_capture_partial>0</can_capture_partial>
+                <can_capture_partial>1</can_capture_partial>
                 <can_authorize_vault>0</can_authorize_vault>
                 <can_capture_vault>0</can_capture_vault>
-                <can_use_internal>0</can_use_internal>
-                <can_refund_partial_per_invoice>0</can_refund_partial_per_invoice>
+                <can_use_internal>1</can_use_internal>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <can_refund>1</can_refund>
-                <can_void>0</can_void>
-                <can_cancel>0</can_cancel>
-                <currency>JPY,CNY,USD</currency>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <currency>JPY</currency>
                 <order_status>processing</order_status>
                 <allowspecific>0</allowspecific>
                 <min_order_total>0</min_order_total>

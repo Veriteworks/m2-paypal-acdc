@@ -5,6 +5,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Collection;
 use Magento\Sales\Model\Order\PaymentFactory;
 use Veriteworks\Paypal\Gateway\Http\Adapter\Paypal;
+use Veriteworks\Paypal\Helper\Data;
 
 class PostManagement
 {
@@ -19,16 +20,20 @@ class PostManagement
 
     protected $client;
 
+    protected $helperData;
+
     public function __construct(
         Collection $paymentCollection,
         PaymentFactory $paymentFactory,
         JsonFactory $resultJsonFactory,
-        Paypal $client
+        Paypal $client,
+        Data $helperData
     ) {
         $this->paymentCollection = $paymentCollection;
         $this->paymentFactory = $paymentFactory;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->client = $client;
+        $this->helperData = $helperData;
     }
 
     /**
@@ -36,6 +41,10 @@ class PostManagement
      */
     public function getTransId($param)
     {
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info($this->helperData->_getConfig('can_void'));
         $orderId = $param['orderId'];
         $transId = $this->paymentCollection->getItemById($orderId)->getCcTransId();
         return $transId;

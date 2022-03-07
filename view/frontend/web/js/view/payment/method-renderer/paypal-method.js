@@ -23,34 +23,34 @@ define(
             test: function () {
                 console.log(this.getPaymentAction());
                 let paymentAction =this.getPaymentAction();
-                $.ajax({
-                    type: 'POST',
-                    url: url.build('rest/V1/veriteworks-paypal/' + paymentAction),
-                    data: JSON.stringify({"param": {'transaction_id': '7PR13813DR9202749'}}),
-                    dataType : "text",
-                    contentType : "application/json",
-                    success: function (json) {
-                        console.log(json);
-                    },
-                    error: function (json) {
-                        alert({content: json});
-                    }
-                });
-        // $.ajax({
+                // $.ajax({
                 //     type: 'POST',
-                //     url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                //     data: JSON.stringify({"param": {"orderId" : '6'}}),
+                //     url: url.build('rest/V1/veriteworks-paypal/' + paymentAction),
+                //     data: JSON.stringify({"param": {'transaction_id': '7PR13813DR9202749'}}),
                 //     dataType : "text",
                 //     contentType : "application/json",
                 //     success: function (json) {
-                //         let data = eval(json);
-                //         console.log(a)
-                //         console.log(data);
+                //         console.log(json);
                 //     },
                 //     error: function (json) {
-                //         console.log(JSON.stringify(json));
+                //         alert({content: json});
                 //     }
                 // });
+        $.ajax({
+                    type: 'POST',
+                    url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
+                    data: JSON.stringify({"param": {"orderId" : '6'}}),
+                    dataType : "text",
+                    contentType : "application/json",
+                    success: function (json) {
+                        let data = eval(json);
+                        console.log(a)
+                        console.log(data);
+                    },
+                    error: function (json) {
+                        console.log(JSON.stringify(json));
+                    }
+                });
 
             },
             paypalForm: function () {

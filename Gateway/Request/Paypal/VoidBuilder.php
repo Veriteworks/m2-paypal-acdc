@@ -10,10 +10,7 @@ use Magento\Payment\Helper\Formatter;
 use Magento\Payment\Model\InfoInterface;
 use \Magento\Framework\Exception\LocalizedException;
 
-/**
- * Cc Capture Data Builder
- */
-class CaptureBuilder implements BuilderInterface
+class VoidBuilder implements BuilderInterface
 {
     use Formatter;
     const REQUEST_ID = 'request_id';
@@ -44,15 +41,15 @@ class CaptureBuilder implements BuilderInterface
     {
         $paymentDO = $this->subjectReader->readPayment($buildSubject);
         $payment   = $paymentDO->getPayment();
-        $payment->setAdditionalInformation('method', 'CAPTURE');
+        $payment->setAdditionalInformation('method', 'VOID');
         $transactionId = $payment->getCcTransId();
         if (!$transactionId) {
-            throw new LocalizedException(__('No authorization transaction to proceed capture.'));
+            throw new LocalizedException(__('No authorization transaction to proceed cancel.'));
         }
         $result = [
             'additional_info' => [
                     self::REQUEST_ID => $transactionId,
-                    self::METHOD => 'capture'
+                    self::METHOD => 'void'
                 ]
         ];
         return $result;

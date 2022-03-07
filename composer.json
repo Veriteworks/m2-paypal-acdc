@@ -2,7 +2,7 @@
     "name": "veriteworks/paypal",
     "type": "magento2-module",
     "license": [
-        "proprietary"
+        "OSL-3.0/AFL-2.0"
     ],
     "description": "Magento2 extension for Paypal.",
     "version": "1.0.0",

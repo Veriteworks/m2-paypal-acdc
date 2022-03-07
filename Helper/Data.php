@@ -9,7 +9,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param $key
      * @return mixed
      */
-    protected function _getConfig($key, $storeId = null)
+    public function _getConfig($key, $storeId = null)
     {
         $key = 'payment/veriteworks_paypal/' . $key;
         return $this->scopeConfig->getValue($key, ScopeInterface::SCOPE_STORES, $storeId);

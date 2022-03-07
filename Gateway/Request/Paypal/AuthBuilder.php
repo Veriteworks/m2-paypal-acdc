@@ -51,11 +51,13 @@ class AuthBuilder implements BuilderInterface
     {
         $paymentDO = $this->subjectReader->readPayment($buildSubject);
         $order     = $paymentDO->getOrder();
+        $payment     = $paymentDO->getPayment();
         $billing = $order->getBillingAddress();
         $shipping = $order->getShippingAddress();
         $storeId   = $order->getStoreId();
         $amount    = $this->subjectReader->readAmount($buildSubject);
         $paymentAction = $this->getPaymentAction($this->dataHelper->getPaymentAction());
+        $payment->setAdditionalInformation('method', $paymentAction);
         $siteName = $this->config->getValue('name', $storeId);
         $result = [
             "param" => [
