@@ -2,10 +2,12 @@
 namespace Veriteworks\Paypal\Model;
 
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Payment\Gateway\Command\CommandException;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Collection;
 use Magento\Sales\Model\Order\PaymentFactory;
 use Veriteworks\Paypal\Gateway\Http\Adapter\Paypal;
 use Veriteworks\Paypal\Helper\Data;
+use Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator;
 
 class PostManagement
 {
@@ -22,18 +24,22 @@ class PostManagement
 
     protected $helperData;
 
+    protected $validator;
+
     public function __construct(
         Collection $paymentCollection,
         PaymentFactory $paymentFactory,
         JsonFactory $resultJsonFactory,
         Paypal $client,
-        Data $helperData
+        Data $helperData,
+        GeneralResponseValidator $validator
     ) {
         $this->paymentCollection = $paymentCollection;
         $this->paymentFactory = $paymentFactory;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->client = $client;
         $this->helperData = $helperData;
+        $this->validator = $validator;
     }
 
     /**
@@ -41,10 +47,6 @@ class PostManagement
      */
     public function getTransId($param)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($this->helperData->_getConfig('can_void'));
         $orderId = $param['orderId'];
         $transId = $this->paymentCollection->getItemById($orderId)->getCcTransId();
         return $transId;
@@ -63,11 +65,16 @@ class PostManagement
         $client = $this->client
             ->setApiPath($apiPath);
         $response = $client->execute($params);
-        $captureId = $response['id'];
-        $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
-        $payment->setAdditionalInformation('capture_id', $captureId);
-        $payment->save();
-
+        $result = $this->validator->validate(['response' => $response]);
+        if (!$result->isValid()) {
+            //do something
+        } else {
+            $captureId = $response['id'];
+            $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
+            $payment->setAdditionalInformation('capture_id', $captureId);
+            $payment->save();
+        }
+        return $response;
     }
 
     public function authorize($param)
@@ -83,10 +90,15 @@ class PostManagement
         $client = $this->client
             ->setApiPath($apiPath);
         $response = $client->execute($params);
-        $authId = $response['purchase_units'][0]['payments']['authorizations'][0]['id'];
-        $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
-        $payment->setAdditionalInformation('auth_id', $authId);
-        $payment->save();
+        $result = $this->validator->validate(['response' => $response]);
+        if (!$result->isValid()) {
+            //do something
+        } else {
+            $authId = $response['purchase_units'][0]['payments']['authorizations'][0]['id'];
+            $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
+            $payment->setAdditionalInformation('auth_id', $authId);
+            $payment->save();
+        }
         return $response;
     }
 }

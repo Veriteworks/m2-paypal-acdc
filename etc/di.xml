@@ -130,7 +130,7 @@
             <argument name="requestBuilder" xsi:type="object">PaypalAuthorizeRequest</argument>
             <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
             <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
-            <argument name="handler" xsi:type="object">PaypalHandler</argument>
+            <argument name="handler" xsi:type="object">PaypalAuthorizeHandler</argument>
             <argument name="validator" xsi:type="object">Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator</argument>
         </arguments>
     </virtualType>

@@ -99,6 +99,7 @@ class Paypal implements AdapterInterface
         if ($additionalInfo["method"] === 'create') {
             $client->setRawData(json_encode($param["param"]), 'text/json');
         } else {
+            $client->setHeaders("PayPal-Mock-Response: {\"mock_application_codes\" : \"INSTRUMENT_DECLINED\"}");
             $client->setHeaders("PayPal-Request-Id: request-" . $additionalInfo["request_id"]);
         }
         try {
@@ -106,6 +107,8 @@ class Paypal implements AdapterInterface
             if ($response->isError()) {
                 if ($this->retryCount < 3) {
                     $this->retryCount++;
+                    $returnValue['code'] = $response->getStatus();
+                    $returnValue['message'] = $response->getMessage();
                     $this->execute($param);
                 } else {
                     $this->log(var_export($this->apiPath, true));
