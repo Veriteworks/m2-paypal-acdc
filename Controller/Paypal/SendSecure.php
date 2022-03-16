@@ -5,44 +5,69 @@ namespace Veriteworks\Paypal\Controller\Paypal;
 use \Magento\Framework\App\Action\Action;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferFactoryInterface;
+use \Magento\Sales\Model\Order\Payment\Transaction;
+use \Magento\Sales\Model\ResourceModel\Order\Payment as OrderPaymentResource;
+use \Magento\Sales\Model\Order;
 
-class Send extends \Magento\Framework\App\Action\Action
+/**
+ * Class Receive
+ * @package Veriteworks\Veritrans\Controller\Mpi
+ */
+class SendSecure extends Action
 {
+    const SHOW_ORDER_URL = 'v2/checkout/orders';
     /**
      * @var ScopeConfigInterface
      */
-    protected $scopeConfig;
+    private $scopeConfig;
     /**
      * @var \Magento\Checkout\Model\Session
      */
-    protected $session;
+    private $session;
     /**
      * @var DataObjectFactory
      */
-    protected $dataObjectFactory;
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $coreRegistry;
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    private $dataObjectFactory;
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    protected $orderRepository;
+    private $orderRepository;
+    /**
+     * @var \Magento\Sales\Model\OrderFactory
+     */
+    private $orderFactory;
+    /**
+     * @var \Magento\Framework\Registry
+     */
+    private $coreRegistry;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+    /**
+     * @var \Magento\Sales\Model\Order\Email\Sender\OrderSender
+     */
+    private $orderSender;
+    /**
+     * @var OrderPaymentResource
+     */
+    private $orderPaymentResource;
 
-    private $client;
+    protected $client;
+
+    protected $transferFactory;
 
     /**
-     * AbstractRemise constructor.
+     * Receive constructor.
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Magento\Framework\DataObjectFactory $dataObjectFactory
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
+     * @param \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender
+     * @param \Magento\Sales\Model\OrderFactory $orderFactory
+     * @param OrderPaymentResource $orderPaymentResource
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
@@ -52,33 +77,52 @@ class Send extends \Magento\Framework\App\Action\Action
         \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
+        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
+        \Magento\Sales\Model\OrderFactory $orderFactory,
+        OrderPaymentResource $orderPaymentResource,
         ClientInterface $client,
         TransferFactoryInterface $transferFactory,
         \Psr\Log\LoggerInterface $logger
     ) {
         parent::__construct($context);
-        $this->orderRepository = $orderRepository;
         $this->scopeConfig = $scopeConfig;
         $this->session = $checkoutSession;
         $this->dataObjectFactory = $dataObjectFactory;
+        $this->orderRepository = $orderRepository;
         $this->coreRegistry = $coreRegistry;
+        $this->orderSender = $orderSender;
+        $this->orderFactory = $orderFactory;
+        $this->logger = $logger;
+        $this->orderPaymentResource = $orderPaymentResource;
         $this->client = $client;
         $this->transferFactory = $transferFactory;
-        $this->logger = $logger;
     }
     /**
      * redirect action
      */
     public function execute()
     {
-        /** @var \Magento\Sales\Model\Order $order */
         $order = $this->orderRepository->get($this->session->getLastOrderId());
-        $this->logger->debug('LastOrderId ' .$this->session->getLastOrderId());
-        $method = $order->getPayment()->getMethod();
+        $payment = $order->getPayment();
+        $transId = $payment->getCcTransId();
         /** @var \Magento\Payment\Model\Method\Adapter $method */
         $method = $order->getPayment()->getMethodInstance();
+        $params = [
+            'additional_info' => [
+                'method' => 'show',
+                'request_id' => $transId
+            ]
+        ];
+        $transferO = $this->transferFactory->create(
+            $params
+        );
+        $response = $this->client->setApiPath(self::SHOW_ORDER_URL. '/'. $transId)->placeRequest($transferO);
+
         $this->coreRegistry->register('isSecureArea', true, true);
+        $payment->setIsTransactionClosed(false);
+        $payment->setIsTransactionPending(false);
         $mode = $method->getConfigData('payment_action');
+
         if ($mode == 'authorize_capture') {
             $invoices = $order->getInvoiceCollection();
             foreach ($invoices as $invoice) {
@@ -88,8 +132,18 @@ class Send extends \Magento\Framework\App\Action\Action
                 $invoice->save();
             }
         }
-        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultRedirectFactory->create();
-        return $resultRedirect->setPath('checkout/onepage/success');
+        $this->orderPaymentResource->save($payment);
+        $order->setState(Order::STATE_PROCESSING)
+            ->addStatusToHistory(
+                true,
+                __('3D Secure authorization success.'),
+                false
+            );
+
+        $this->orderRepository->save($order);
+        if ($order->getCanSendNewEmailFlag()) {
+            $this->orderSender->send($order);
+        }
+        $this->_redirect('checkout/onepage/success');
     }
 }

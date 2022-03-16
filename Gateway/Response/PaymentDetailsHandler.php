@@ -1,6 +1,7 @@
 <?php
 namespace Veriteworks\Paypal\Gateway\Response;
 
+use Magento\Sales\Model\Order;
 use Veriteworks\Paypal\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;

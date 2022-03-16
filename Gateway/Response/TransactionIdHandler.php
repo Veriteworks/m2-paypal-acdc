@@ -8,6 +8,7 @@ namespace Veriteworks\Paypal\Gateway\Response;
 use Veriteworks\Paypal\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order;
 
 class TransactionIdHandler implements HandlerInterface
 {

@@ -95,15 +95,20 @@ class Paypal implements AdapterInterface
         $client = new \Zend_Http_Client($this->apiPath, $config);
         $client->setHeaders('Content-type: application/json');
         $client->setHeaders("Authorization: Bearer ". $this->dataHelper->getAccessToken());
-        $client->setHeaders("PayPal-Partner-Attribution-Id: BN_CODE");
-        if ($additionalInfo["method"] === 'create') {
-            $client->setRawData(json_encode($param["param"]), 'text/json');
-        } else {
-            $client->setHeaders("PayPal-Mock-Response: {\"mock_application_codes\" : \"INSTRUMENT_DECLINED\"}");
-            $client->setHeaders("PayPal-Request-Id: request-" . $additionalInfo["request_id"]);
+        if ($additionalInfo["method"] !== 'show') {
+            $client->setHeaders("PayPal-Partner-Attribution-Id: BN_CODE");
+            if ($additionalInfo["method"] === 'create') {
+                $client->setRawData(json_encode($param["param"]), 'text/json');
+            } else {
+                $client->setHeaders("PayPal-Request-Id: request-" . $additionalInfo["request_id"]);
+            }
         }
         try {
-            $response = $client->request('POST');
+            if ($additionalInfo["method"] !== 'show') {
+                $response = $client->request('POST');
+            } else {
+                $response = $client->request('GET');
+            }
             if ($response->isError()) {
                 if ($this->retryCount < 3) {
                     $this->retryCount++;

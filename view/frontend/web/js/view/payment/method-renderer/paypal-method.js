@@ -21,7 +21,7 @@ define(
             },
             isVisible: ko.observable(false),
             test: function () {
-                console.log(this.getPaymentAction());
+                window.location.replace(url.build('paypal/paypal/send/'));
                 let paymentAction =this.getPaymentAction();
                 // $.ajax({
                 //     type: 'POST',
@@ -36,52 +36,62 @@ define(
                 //         alert({content: json});
                 //     }
                 // });
-        $.ajax({
-                    type: 'POST',
-                    url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                    data: JSON.stringify({"param": {"orderId" : '6'}}),
-                    dataType : "text",
-                    contentType : "application/json",
-                    success: function (json) {
-                        let data = eval(json);
-                        console.log(a)
-                        console.log(data);
-                    },
-                    error: function (json) {
-                        console.log(JSON.stringify(json));
-                    }
-                });
-
+        // $.ajax({
+        //             type: 'POST',
+        //             url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
+        //             data: JSON.stringify({"param": {"orderId" : '6'}}),
+        //             dataType : "text",
+        //             contentType : "application/json",
+        //             success: function (json) {
+        //                 let data = eval(json);
+        //                 console.log(a)
+        //                 console.log(data);
+        //             },
+        //             error: function (json) {
+        //                 console.log(JSON.stringify(json));
+        //             }
+        //         });
+        //
             },
             paypalForm: function () {
                 let paymentAction = this.getPaymentAction();
-                let accessToken = this.getAccessToken();
+                let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
                     this.isVisible(true);
                     paypal.HostedFields.render({
                         createOrder: function (data, actions) {
+                            self.isPlaceOrderActionAllowed(false);
+                            fullScreenLoader.startLoader();
                             let defer = $.Deferred();
-                            self.getPlaceOrderDeferredObject().done(function (res) {
-                                fullScreenLoader.startLoader();
-                                $.ajax({
-                                    type: 'POST',
-                                    url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                                    data: JSON.stringify({"param": {"orderId" : res}}),
-                                    dataType : "text",
-                                    contentType : "application/json",
-                                    success: function (json) {
-                                        let data = eval(json);
-                                        defer.resolve(data);
-                                    },
-                                    error: function (json) {
-                                        alert({content: json});
-                                    },
-                                    always: function () {
-                                        fullScreenLoader.stopLoader();
+                            self.getPlaceOrderDeferredObject()
+                                .fail(
+                                    function () {
+                                        self.isPlaceOrderActionAllowed(true);
                                     }
+                                ).done(function (res) {
+                                    fullScreenLoader.startLoader();
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
+                                        data: JSON.stringify({"param": {"orderId" : res}}),
+                                        dataType : "text",
+                                        contentType : "application/json",
+                                    }).success(
+                                        function (json) {
+                                            let data = eval(json);
+                                            defer.resolve(data);
+                                        }
+                                    ).fail(
+                                        function (json) {
+                                            alert({content: json});
+                                        }
+                                    ).always(
+                                        function () {
+                                            fullScreenLoader.stopLoader();
+                                        }
+                                    );
                                 });
-                            });
                             return defer.promise(this);
                         },
                         styles: {
@@ -112,27 +122,29 @@ define(
                             }
                         }
                     }).then(function (hf) {
-                        document.querySelector('#my-sample-form').addEventListener('submit', event => {
+                        document.querySelector('#' + self.getCode() + '-form').addEventListener('submit', event => {
                             event.preventDefault();
-                            hf.submit().then(function (payload) {
-                                fullScreenLoader.startLoader();
-                                $.ajax({
-                                    type: 'POST',
-                                    url: url.build('rest/V1/veriteworks-paypal/' + paymentAction),
-                                    data: JSON.stringify({"param": {'transaction_id': payload.orderId}}),
-                                    dataType : "text",
-                                    contentType : "application/json",
-                                    success: function (json) {
-                                        window.location.replace(url.build('paypal/paypal/send/'));
-                                    },
-                                    error: function (json) {
-                                        alert({content: json});
-                                    },
-                                    always: function () {
-                                        fullScreenLoader.stopLoader();
+                            fullScreenLoader.stopLoader();
+                            if (use3DS) {
+                                hf.submit({
+                                    contingencies: ['SCA_ALWAYS']
+                                }).then(function (payload) {
+                                    console.log(payload)
+                                    if (payload['liabilityShift'] === undefined) {
+                                        self.processError({'custom': '3dsecure is not used.'});
+                                    } else if (payload['liabilityShift'] !== 'POSSIBLE') {
+                                        self.processError({'custom': 'An error occurred in 3dsecure.'});
+                                    } else {
+                                        self.paymentApi(paymentAction, payload);
                                     }
+                                }).catch(function (err) {
+                                    self.processError(err);
                                 });
-                            });
+                            } else {
+                                hf.submit().then(function () {
+                                    window.location.replace(url.build('paypal/paypal/send/'));
+                                });
+                            }
                         });
                     });
                 }
@@ -142,6 +154,53 @@ define(
                     * Custom Card Fields is not eligible
                     */
                 }
+            },
+            paymentApi: function (paymentAction, payload) {
+                let self = this;
+                fullScreenLoader.startLoader();
+                $.ajax({
+                    type: 'POST',
+                    url: url.build('rest/V1/veriteworks-paypal/' + paymentAction),
+                    data: JSON.stringify({"param": {'payload': payload}}),
+                    dataType : "text",
+                    contentType : "application/json",
+                    success: function (json) {
+                        window.location.replace(url.build('paypal/paypal/send/'));
+                    },
+                    error: function (err) {
+                        self.processError(err);
+                    },
+                    always: function () {
+                        fullScreenLoader.stopLoader();
+                    }
+                });
+            },
+
+            processError: function (err) {
+                console.log(err);
+                fullScreenLoader.startLoader();
+                let self = this;
+                $.ajax({
+                    type: 'POST',
+                    url: url.build('rest/V1/veriteworks-paypal/process-error'),
+                    data: JSON.stringify({"param": {"error" : err}}),
+                    dataType : "text",
+                    contentType : "application/json",
+                    success: function (json) {
+                        let data = eval(json);
+                        let content = '';
+                        for (const elem of data) {
+                            content += elem + '</br>';
+                        }
+                        fullScreenLoader.stopLoader();
+                        alert({content: content});
+                        self.isPlaceOrderActionAllowed(true);
+                    },
+                    error: function (err) {
+                        fullScreenLoader.stopLoader();
+                        alert({content: err});
+                    }
+                });
             },
 
             initObservable: function () {
@@ -179,6 +238,7 @@ define(
                     'additional_data': additional
                 };
             },
+
             getClientId: function () {
                 return window.checkoutConfig.payment.veriteworks_paypal.client_id;
             },
@@ -197,6 +257,10 @@ define(
                     return 'capture';
                 }
 
+            },
+
+            getUse3DS: function () {
+                return window.checkoutConfig.payment.veriteworks_paypal.use_3dsecure;
             },
 
             isActive: function() {

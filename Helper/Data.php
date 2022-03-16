@@ -34,4 +34,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->_getConfig('payment_action', $storeId);
     }
+
+    public function getUse3DS($storeId = null)
+    {
+        return $this->_getConfig('use_3dsecure', $storeId);
+    }
 }

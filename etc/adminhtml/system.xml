@@ -29,6 +29,11 @@
                     <source_model>Veriteworks\Paypal\Model\Source\PaymentAction</source_model>
                     <config_path>payment/veriteworks_paypal/payment_action</config_path>
                 </field>
+                <field id="use_3dsecure" type="select" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use 3D Secure</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>payment/veriteworks_paypal/use_3dsecure</config_path>
+                </field>
                 <field id="title" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                     <config_path>payment/veriteworks_paypal/title</config_path>

@@ -20,9 +20,8 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <button value="test" id="test" class="btn" data-bind="click: test">test</button>
         <button value="paypal form" id="paypalForm" class="btn" data-bind="click: paypalForm">Pay with Card</button>
-        <form id="my-sample-form" data-bind="visible: isVisible()">
+        <form data-bind="visible: isVisible(), attr: {id: getCode() + '-form'}">
             <label for="card-number">Card Number</label>
             <div id="card-number"></div>
 
@@ -32,7 +31,19 @@
             <label for="cvv">CVV</label>
             <div id="cvv"></div>
 
-            <button value="submit" id="submit" class="btn">Pay with Card</button>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button class="action primary checkout"
+                            type="submit"
+                            id="submit"
+                            data-bind="
+                        attr: {title: $t('Place Order')},
+                        css: {disabled: !isPlaceOrderActionAllowed()}
+                        ">
+                        <span data-bind="i18n: 'Place Order'"></span>
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>

@@ -12,6 +12,7 @@ use Magento\Payment\Gateway\Validator\ValidatorInterface;
 use Magento\Payment\Gateway\Command\CommandException;
 use Magento\Checkout\Helper\Data as CheckoutHelper;
 use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Order;
 
 /**
  * Class AuthCommand

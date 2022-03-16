@@ -3,11 +3,13 @@ namespace Veriteworks\Paypal\Model;
 
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Payment\Gateway\Command\CommandException;
+use Magento\Payment\Gateway\Http\ClientInterface;
+use Magento\Payment\Gateway\Http\TransferFactoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Collection;
 use Magento\Sales\Model\Order\PaymentFactory;
-use Veriteworks\Paypal\Gateway\Http\Adapter\Paypal;
 use Veriteworks\Paypal\Helper\Data;
 use Veriteworks\Paypal\Gateway\Validator\GeneralResponseValidator;
+use Veriteworks\Paypal\Logger\Logger;
 
 class PostManagement
 {
@@ -22,24 +24,36 @@ class PostManagement
 
     protected $client;
 
+    protected $transferFactory;
+
     protected $helperData;
 
     protected $validator;
+
+    protected $logger;
 
     public function __construct(
         Collection $paymentCollection,
         PaymentFactory $paymentFactory,
         JsonFactory $resultJsonFactory,
-        Paypal $client,
+        ClientInterface $client,
+        TransferFactoryInterface $transferFactory,
         Data $helperData,
-        GeneralResponseValidator $validator
+        GeneralResponseValidator $validator,
+        \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        Logger $logger
     ) {
         $this->paymentCollection = $paymentCollection;
         $this->paymentFactory = $paymentFactory;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->client = $client;
+        $this->transferFactory = $transferFactory;
         $this->helperData = $helperData;
         $this->validator = $validator;
+        $this->orderRepository = $orderRepository;
+        $this->session = $checkoutSession;
+        $this->logger = $logger;
     }
 
     /**
@@ -54,17 +68,18 @@ class PostManagement
 
     public function capture($param)
     {
-        $transactionId = $param["transaction_id"];
-        $apiPath = 'v2/checkout/orders/' . $transactionId . '/capture';
+        $payload = $param['payload'];
+        $transactionId = $payload['orderId'];
+        $apiPath = 'v2/checkout/orders/' . $transactionId. '/capture';
         $params = [
             'additional_info' => [
                 self::REQUEST_ID => $transactionId,
                 self::METHOD => 'capture'
             ]
         ];
-        $client = $this->client
-            ->setApiPath($apiPath);
-        $response = $client->execute($params);
+        $transferO = $this->transferFactory->create($params);
+        $response = $this->client
+            ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
         if (!$result->isValid()) {
             //do something
@@ -79,7 +94,8 @@ class PostManagement
 
     public function authorize($param)
     {
-        $transactionId = $param["transaction_id"];
+        $payload = $param['payload'];
+        $transactionId = $payload['orderId'];
         $apiPath = 'v2/checkout/orders/' . $transactionId . '/authorize';
         $params = [
             'additional_info' => [
@@ -87,9 +103,9 @@ class PostManagement
                 self::METHOD => 'authorize'
             ]
         ];
-        $client = $this->client
-            ->setApiPath($apiPath);
-        $response = $client->execute($params);
+        $transferO = $this->transferFactory->create($params);
+        $response = $this->client
+            ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
         if (!$result->isValid()) {
             //do something
@@ -100,5 +116,26 @@ class PostManagement
             $payment->save();
         }
         return $response;
+    }
+
+    public function processError($param)
+    {
+        $order = $this->orderRepository->get($this->session->getLastOrderId());
+        $order->cancel();
+        $this->session->restoreQuote();
+        $this->orderRepository->delete($order);
+        $error = $param['error'];
+        $this->logger->error(var_export($error, true));
+        $result = [];
+        if (array_key_exists('details', $error)) {
+            foreach ($error['details'] as $elem) {
+                    array_push($result, $elem['description']);
+            }
+        } elseif (array_key_exists('custom', $error)) {
+            array_push($result, $error['custom']);
+        } else {
+            array_push($result, 'error happened.');
+        }
+        return $result;
     }
 }

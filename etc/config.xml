@@ -6,6 +6,7 @@
                 <model>PaypalFacade</model>
                 <title>Veriteworks Paypal Payment</title>
                 <payment_action>authorize_capture</payment_action>
+                <use_3dsecure>0</use_3dsecure>
                 <active>0</active>
                 <is_test>1</is_test>
                 <is_gateway>1</is_gateway>

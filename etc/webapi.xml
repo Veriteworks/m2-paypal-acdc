@@ -18,4 +18,10 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
+    <route method="POST" url="/V1/veriteworks-paypal/process-error">
+        <service class="Veriteworks\Paypal\Api\PostManagementInterface" method="processError"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
 </routes>

@@ -88,6 +88,18 @@
         </arguments>
     </virtualType>
 
+    <type name="Veriteworks\Paypal\Controller\Paypal\Send">
+        <arguments>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+            <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
+        </arguments>
+    </type>
+    <type name="Veriteworks\Paypal\Model\PostManagement">
+        <arguments>
+            <argument name="client" xsi:type="object">Veriteworks\Paypal\Gateway\Http\Client</argument>
+            <argument name="transferFactory" xsi:type="object">Veriteworks\Paypal\Gateway\Http\TransferFactory</argument>
+        </arguments>
+    </type>
     <!--  authorize start  -->
     <virtualType name="PaypalAuthorizeCommand" type="Veriteworks\Paypal\Gateway\Command\AuthCommand">
         <arguments>
@@ -110,6 +122,7 @@
             <argument name="handlers" xsi:type="array">
                 <item name="payment_details" xsi:type="string">Veriteworks\Paypal\Gateway\Response\PaymentDetailsHandler</item>
                 <item name="txn_id" xsi:type="string">Veriteworks\Paypal\Gateway\Response\TransactionIdHandler</item>
+                <item name="authorize_handler" xsi:type="string">Veriteworks\Paypal\Gateway\Response\AuthorizeHandler</item>
             </argument>
         </arguments>
     </virtualType>

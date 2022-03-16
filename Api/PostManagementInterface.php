@@ -20,4 +20,10 @@ interface PostManagementInterface
      * @return array
      */
     public function capture($param);
+
+    /**
+     * @param mixed $param
+     * @return array
+     */
+    public function processError($param);
 }
