@@ -82,7 +82,10 @@ class PostManagement
             ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
         if (!$result->isValid()) {
-            //do something
+            $this->processError([
+                'err_intent' => 'capture_err',
+                'err_description' => $result->getFailsDescription()
+            ]);
         } else {
             $captureId = $response['id'];
             $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
@@ -108,7 +111,10 @@ class PostManagement
             ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
         if (!$result->isValid()) {
-            //do something
+            $this->processError([
+                'err_intent' => 'authorize_err',
+                'err_description' => $result->getFailsDescription()
+            ]);
         } else {
             $authId = $response['purchase_units'][0]['payments']['authorizations'][0]['id'];
             $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
@@ -133,6 +139,8 @@ class PostManagement
             }
         } elseif (array_key_exists('custom', $error)) {
             array_push($result, $error['custom']);
+        } elseif (array_key_exists('err_intent', $error)) {
+            array_push($result, $error);
         } else {
             array_push($result, 'error happened.');
         }

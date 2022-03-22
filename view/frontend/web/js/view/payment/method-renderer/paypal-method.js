@@ -165,7 +165,13 @@ define(
                     dataType : "text",
                     contentType : "application/json",
                     success: function (json) {
-                        window.location.replace(url.build('paypal/paypal/send/'));
+                        let data = eval(json);
+                        if (data.err_intent !== undefined) {
+                            alert({content: content});
+                            self.isPlaceOrderActionAllowed(true);
+                        } else {
+                            window.location.replace(url.build('paypal/paypal/send/'));
+                        }
                     },
                     error: function (err) {
                         self.processError(err);

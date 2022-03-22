@@ -8,11 +8,6 @@ use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 
-/**
- * Class CurrencyValidator
- * @package Magento\Payment\Gateway\Validator
- * @api
- */
 class MultiCurrencyValidator extends AbstractValidator
 {
     /**

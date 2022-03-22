@@ -34,9 +34,6 @@ class Paypal implements AdapterInterface
 
     private $storeId;
 
-    /**
-     * GATEWAY URL
-     */
     const GATEWAY_URL = 'https://api-m.paypal.com/';
 
     const GATEWAY_URL_TEST = 'https://api-m.sandbox.paypal.com/';
@@ -96,7 +93,7 @@ class Paypal implements AdapterInterface
         $client->setHeaders('Content-type: application/json');
         $client->setHeaders("Authorization: Bearer ". $this->dataHelper->getAccessToken());
         if ($additionalInfo["method"] !== 'show') {
-            $client->setHeaders("PayPal-Partner-Attribution-Id: BN_CODE");
+            $client->setHeaders("PayPal-Partner-Attribution-Id: Veriteworks_SI_Magento_GitHub");
             if ($additionalInfo["method"] === 'create') {
                 $client->setRawData(json_encode($param["param"]), 'text/json');
             } else {

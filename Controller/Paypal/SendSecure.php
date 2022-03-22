@@ -9,10 +9,6 @@ use \Magento\Sales\Model\Order\Payment\Transaction;
 use \Magento\Sales\Model\ResourceModel\Order\Payment as OrderPaymentResource;
 use \Magento\Sales\Model\Order;
 
-/**
- * Class Receive
- * @package Veriteworks\Veritrans\Controller\Mpi
- */
 class SendSecure extends Action
 {
     const SHOW_ORDER_URL = 'v2/checkout/orders';

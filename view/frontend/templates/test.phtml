@@ -1,4 +1,8 @@
+<?php
+/** @var \Veriteworks\Paypal\Block\Test $block */
+$attr= 'https://www.paypal.com/sdk/js?components=hosted-fields&client-id';
+?>
 <script
-    src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<?= $block->getClientId()?>"
-    data-client-token=<?= $block->getClientToken()?>>
+    src="<?= $block->escapeHtmlAttr($attr)?>=<?= $block->escapeHtmlAttr($block->getClientId())?>"
+    data-client-token=<?= $block->escapeHtmlAttr($block->getClientToken())?>>
 </script>

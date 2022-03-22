@@ -7,9 +7,6 @@ use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
-/**
- * Payment Details Handler
- */
 class PaymentDetailsHandler implements HandlerInterface
 {
     /**

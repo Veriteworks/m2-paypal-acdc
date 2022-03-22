@@ -14,10 +14,6 @@ use Magento\Checkout\Helper\Data as CheckoutHelper;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Model\Order;
 
-/**
- * Class AuthCommand
- * @SuppressWarnings(PHPMD)
- */
 class AuthCommand implements CommandInterface
 {
     use logExceptions;

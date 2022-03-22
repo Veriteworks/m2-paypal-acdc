@@ -31,7 +31,7 @@ class AuthorizeHandler implements HandlerInterface
     public function __construct(
         SubjectReader $subjectReader,
         ScopeConfigInterface $scopeConfig
-    ){
+    ) {
         $this->subjectReader = $subjectReader;
         $this->scopeConfig = $scopeConfig;
     }
@@ -53,5 +53,4 @@ class AuthorizeHandler implements HandlerInterface
         $key = 'payment/veriteworks_paypal/' . $key;
         return $this->scopeConfig->getValue($key, ScopeInterface::SCOPE_STORES, $storeId);
     }
-
 }

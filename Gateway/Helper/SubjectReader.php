@@ -6,9 +6,6 @@ use Magento\Payment\Gateway\Helper;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 
-/**
- * Class SubjectReader
- */
 class SubjectReader
 {
     /**
