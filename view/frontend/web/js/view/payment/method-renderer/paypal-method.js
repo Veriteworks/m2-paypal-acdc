@@ -20,39 +20,6 @@ define(
                 template: 'Veriteworks_Paypal/payment/paypal'
             },
             isVisible: ko.observable(false),
-            test: function () {
-                window.location.replace(url.build('paypal/paypal/send/'));
-                let paymentAction =this.getPaymentAction();
-                // $.ajax({
-                //     type: 'POST',
-                //     url: url.build('rest/V1/veriteworks-paypal/' + paymentAction),
-                //     data: JSON.stringify({"param": {'transaction_id': '7PR13813DR9202749'}}),
-                //     dataType : "text",
-                //     contentType : "application/json",
-                //     success: function (json) {
-                //         console.log(json);
-                //     },
-                //     error: function (json) {
-                //         alert({content: json});
-                //     }
-                // });
-        // $.ajax({
-        //             type: 'POST',
-        //             url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-        //             data: JSON.stringify({"param": {"orderId" : '6'}}),
-        //             dataType : "text",
-        //             contentType : "application/json",
-        //             success: function (json) {
-        //                 let data = eval(json);
-        //                 console.log(a)
-        //                 console.log(data);
-        //             },
-        //             error: function (json) {
-        //                 console.log(JSON.stringify(json));
-        //             }
-        //         });
-        //
-            },
             paypalForm: function () {
                 let paymentAction = this.getPaymentAction();
                 let use3DS = this.getUse3DS();
@@ -74,23 +41,23 @@ define(
                                     $.ajax({
                                         type: 'POST',
                                         url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                                        data: JSON.stringify({"param": {"orderId" : res}}),
-                                        dataType : "text",
-                                        contentType : "application/json",
-                                    }).success(
-                                        function (json) {
-                                            let data = eval(json);
-                                            defer.resolve(data);
-                                        }
-                                    ).fail(
-                                        function (json) {
-                                            alert({content: json});
-                                        }
-                                    ).always(
-                                        function () {
+                                        data: JSON.stringify({"param": {"orderId": 'res'}}),
+                                        dataType: "text",
+                                        contentType: "application/json",
+                                        success: function (json) {
+                                            let data = eval(json)[0];
+                                            if (!data.err) {
+                                                defer.resolve(data);
+                                            } else {
+                                                self.processError(data);
+                                            }
+                                            fullScreenLoader.stopLoader();
+                                        },
+                                        error: function (err) {
+                                            self.processError(err);
                                             fullScreenLoader.stopLoader();
                                         }
-                                    );
+                                    });
                                 });
                             return defer.promise(this);
                         },
@@ -98,7 +65,8 @@ define(
                             'input': {
                                 'font-size': '14px',
                                 'font-family': 'Product Sans',
-                                'color': '#3a3a3a'
+                                'color': '#3a3a3a',
+                                'outline': '1px solid'
                             },
                             ':focus': {
                                 'color': 'black'
@@ -183,7 +151,6 @@ define(
             },
 
             processError: function (err) {
-                console.log(err);
                 fullScreenLoader.startLoader();
                 let self = this;
                 $.ajax({
@@ -266,7 +233,7 @@ define(
             },
 
             getUse3DS: function () {
-                return window.checkoutConfig.payment.veriteworks_paypal.use_3dsecure;
+                return window.checkoutConfig.payment.veriteworks_paypal.use_3dsecure === '1';
             },
 
             isActive: function() {
@@ -313,47 +280,6 @@ define(
                 });
             }
 
-            // placeOrder: function (data, event) {
-            //     var self = this;
-            //     let client = this.getClientId();
-            //     let password = this.getPassword();
-            //             $.ajax({
-            //                 type: 'POST',
-            //                 contentType: 'application/json; charset=utf-8',
-            //                 url: 'https://api-m.sandbox.paypal.com/v1/oauth2/token',
-            //                 accept: 'application/json',
-            //                 data: "grant_type=client_credentials",
-            //                 cache: false,
-            //                 beforeSend: function (xhr) {
-            //                     xhr.setRequestHeader("Authorization", "Basic " + btoa( client + ":" + password));
-            //                 },
-            //                 success: function (json) {
-            //                     var data = eval(json);
-            //
-            //                     if (data.access_token) {
-            //                         jQuery('#veriteworks_paypal_token').val(data.access_token);
-            //
-            //                         self.getPlaceOrderDeferredObject().fail(
-            //                             function () {
-            //                                 self.isPlaceOrderActionAllowed(true);
-            //                             }
-            //                         ).done(
-            //                             function () {
-            //                                 if (self.redirectAfterPlaceOrder) {
-            //                                     window.location.replace(url.build('paypal/paypal/send'));
-            //                                 }
-            //                             });
-            //
-            //                     } else {
-            //                         alert({content: $t("Please confirm your credit card information.")});
-            //                         self.isPlaceOrderActionAllowed(true);
-            //                     }
-            //                 },
-            //                 error: function (json) {
-            //                     alert({content: $t("Please confirm your credit card information.")});
-            //                 }
-            //             });
-            // }
         });
 
     }

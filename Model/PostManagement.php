@@ -56,16 +56,6 @@ class PostManagement
         $this->logger = $logger;
     }
 
-    /**
-     * redirect action
-     */
-    public function getTransId($param)
-    {
-        $orderId = $param['orderId'];
-        $transId = $this->paymentCollection->getItemById($orderId)->getCcTransId();
-        return $transId;
-    }
-
     public function capture($param)
     {
         $payload = $param['payload'];

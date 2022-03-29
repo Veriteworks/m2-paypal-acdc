@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Veriteworks\Paypal\Api\PostManagementInterface" type="Veriteworks\Paypal\Model\PostManagement"/>
+    <preference for="Veriteworks\Paypal\Api\GetTransIdInterface" type="Veriteworks\Paypal\Model\GetTransId"/>
     <!-- Define Logger -->
     <type name="Veriteworks\Paypal\Logger\Handler">
         <arguments>

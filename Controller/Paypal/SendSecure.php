@@ -3,9 +3,6 @@
 namespace Veriteworks\Paypal\Controller\Paypal;
 
 use \Magento\Framework\App\Action\Action;
-use Magento\Payment\Gateway\Http\ClientInterface;
-use Magento\Payment\Gateway\Http\TransferFactoryInterface;
-use \Magento\Sales\Model\Order\Payment\Transaction;
 use \Magento\Sales\Model\ResourceModel\Order\Payment as OrderPaymentResource;
 use \Magento\Sales\Model\Order;
 
@@ -49,10 +46,6 @@ class SendSecure extends Action
      */
     private $orderPaymentResource;
 
-    protected $client;
-
-    protected $transferFactory;
-
     /**
      * Receive constructor.
      * @param \Magento\Framework\App\Action\Context $context
@@ -76,8 +69,6 @@ class SendSecure extends Action
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         OrderPaymentResource $orderPaymentResource,
-        ClientInterface $client,
-        TransferFactoryInterface $transferFactory,
         \Psr\Log\LoggerInterface $logger
     ) {
         parent::__construct($context);
@@ -90,8 +81,6 @@ class SendSecure extends Action
         $this->orderFactory = $orderFactory;
         $this->logger = $logger;
         $this->orderPaymentResource = $orderPaymentResource;
-        $this->client = $client;
-        $this->transferFactory = $transferFactory;
     }
     /**
      * redirect action
@@ -103,17 +92,6 @@ class SendSecure extends Action
         $transId = $payment->getCcTransId();
         /** @var \Magento\Payment\Model\Method\Adapter $method */
         $method = $order->getPayment()->getMethodInstance();
-        $params = [
-            'additional_info' => [
-                'method' => 'show',
-                'request_id' => $transId
-            ]
-        ];
-        $transferO = $this->transferFactory->create(
-            $params
-        );
-        $response = $this->client->setApiPath(self::SHOW_ORDER_URL. '/'. $transId)->placeRequest($transferO);
-
         $this->coreRegistry->register('isSecureArea', true, true);
         $payment->setIsTransactionClosed(false);
         $payment->setIsTransactionPending(false);

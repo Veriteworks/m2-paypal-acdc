@@ -33,8 +33,6 @@ class Send extends \Magento\Framework\App\Action\Action
      */
     protected $orderRepository;
 
-    private $client;
-
     /**
      * AbstractRemise constructor.
      * @param \Magento\Framework\App\Action\Context $context
@@ -52,7 +50,6 @@ class Send extends \Magento\Framework\App\Action\Action
         \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        ClientInterface $client,
         TransferFactoryInterface $transferFactory,
         \Psr\Log\LoggerInterface $logger
     ) {
@@ -62,7 +59,6 @@ class Send extends \Magento\Framework\App\Action\Action
         $this->session = $checkoutSession;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->coreRegistry = $coreRegistry;
-        $this->client = $client;
         $this->transferFactory = $transferFactory;
         $this->logger = $logger;
     }
