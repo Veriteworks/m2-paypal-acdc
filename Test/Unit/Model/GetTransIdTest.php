@@ -36,28 +36,32 @@ class GetTransIdTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        $this->payment->expects($this->any())
+        $errmsg = ['errmsg' => ['err' => true, 'custom' => 'order id doesn\'t exist.']];
+
+        $this->payment->expects($this->once())
             ->method('getCcTransId')
             ->willReturn('TRANSID');
 
-        $this->paymentRepository->expects($this->any())
+        $this->paymentRepository->expects($this->once())
             ->method('get')
             ->willReturn($this->payment);
 
-        $this->assertEquals(false, $this->getTransId->execute([]));
+        $this->assertEquals($errmsg, $this->getTransId->execute([]));
         $this->assertEquals('TRANSID', $this->getTransId->execute(['orderId' => 'ORDERID']));
     }
 
     public function testExecuteException()
     {
-        $this->payment->expects($this->any())
-            ->method('getCcTransId')
-            ->willReturn('TRANSID');
+        $errmsg = ['errmsg' => ['err' => true, 'custom' => 'Settlement doesn\'t exist.']];
 
-        $this->paymentRepository->expects($this->any())
+        $this->payment->expects($this->once())
+            ->method('getCcTransId')
+            ->willThrowException($this->exception);
+
+        $this->paymentRepository->expects($this->once())
             ->method('get')
             ->willReturn($this->payment);
 
-        $this->assertEquals($this->exception, $this->getTransId->execute(['orderId' => 'ORDERID']));
+        $this->assertEquals($errmsg, $this->getTransId->execute(['orderId' => 'ORDERID']));
     }
 }

@@ -25,17 +25,16 @@ class GetTransId
      */
     public function execute($param)
     {
-        $errmsg = ['errmsg' => ['err' => true, 'custom' => 'order id doesn\'t exist.']];
         if (array_key_exists('orderId', $param)) {
             $orderId = $param['orderId'];
         } else {
-            return $errmsg;
+            return ['errmsg' => ['err' => true, 'custom' => 'order id doesn\'t exist.']];
         }
         try {
             return $this->paymentRepository->get($orderId)->getCcTransId();
         } catch (NoSuchEntityException $e) {
             $this->logger->debug($e->getMessage());
-            return $errmsg;
+            return ['errmsg' => ['err' => true, 'custom' => 'Settlement doesn\'t exist.']];
         } catch (\Exception $e) {
             return ['err' => ['custom' => 'error happened.']];
         }

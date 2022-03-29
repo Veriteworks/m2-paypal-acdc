@@ -41,7 +41,7 @@ define(
                                     $.ajax({
                                         type: 'POST',
                                         url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                                        data: JSON.stringify({"param": {"orderId": 'res'}}),
+                                        data: JSON.stringify({"param": {"orderId": res}}),
                                         dataType: "text",
                                         contentType: "application/json",
                                         success: function (json) {
@@ -66,6 +66,7 @@ define(
                                 'font-size': '14px',
                                 'font-family': 'Product Sans',
                                 'color': '#3a3a3a',
+                                'height': '10px',
                                 'outline': '1px solid'
                             },
                             ':focus': {
