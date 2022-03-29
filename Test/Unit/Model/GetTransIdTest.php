@@ -22,13 +22,20 @@ class GetTransIdTest extends \PHPUnit\Framework\TestCase
 
     protected $exception;
 
+    protected $exceptionNoSuchEntity;
+
     public function setUp()
     {
         $this->payment = $this->createMock(Payment::class);
         $this->paymentRepository = $this->createMock(OrderPaymentRepositoryInterface::class);
         $this->logger = $this->createMock(Logger::class);
-        $this->exception = $this->createMock(NoSuchEntityException::class);
+        $this->exceptionNoSuchEntity = $this->createMock(NoSuchEntityException::class);
+        $this->exception = $this->createMock(\Exception::class);
         $this->getTransId = new GetTransId($this->paymentRepository, $this->logger);
+
+        $this->paymentRepository->expects($this->once())
+            ->method('get')
+            ->willReturn($this->payment);
     }
 
     /**
@@ -42,25 +49,28 @@ class GetTransIdTest extends \PHPUnit\Framework\TestCase
             ->method('getCcTransId')
             ->willReturn('TRANSID');
 
-        $this->paymentRepository->expects($this->once())
-            ->method('get')
-            ->willReturn($this->payment);
-
         $this->assertEquals($errmsg, $this->getTransId->execute([]));
         $this->assertEquals('TRANSID', $this->getTransId->execute(['orderId' => 'ORDERID']));
     }
 
-    public function testExecuteException()
+    public function testExecuteExceptionNoSuchEntity()
     {
         $errmsg = ['errmsg' => ['err' => true, 'custom' => 'Settlement doesn\'t exist.']];
 
         $this->payment->expects($this->once())
             ->method('getCcTransId')
-            ->willThrowException($this->exception);
+            ->willThrowException($this->exceptionNoSuchEntity);
 
-        $this->paymentRepository->expects($this->once())
-            ->method('get')
-            ->willReturn($this->payment);
+        $this->assertEquals($errmsg, $this->getTransId->execute(['orderId' => 'ORDERID']));
+    }
+
+    public function testExecuteException()
+    {
+        $errmsg = ['errmsg' =>['err' => true, 'custom' => 'error happened.']];
+
+        $this->payment->expects($this->once())
+            ->method('getCcTransId')
+            ->willThrowException($this->exception);
 
         $this->assertEquals($errmsg, $this->getTransId->execute(['orderId' => 'ORDERID']));
     }
