@@ -36,7 +36,7 @@ class GetTransId
             $this->logger->debug($e->getMessage());
             return ['errmsg' => ['err' => true, 'custom' => 'Settlement doesn\'t exist.']];
         } catch (\Exception $e) {
-            return ['err' => ['custom' => 'error happened.']];
+            return ['errmsg' =>['err' => true, 'custom' => 'error happened.']];
         }
     }
 }

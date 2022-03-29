@@ -20,11 +20,14 @@ define(
                 template: 'Veriteworks_Paypal/payment/paypal'
             },
             isVisible: ko.observable(false),
-            paypalForm: function () {
+            setStyle: function () {
+            },
+            paypalForm: function (a,b,c) {
                 let paymentAction = this.getPaymentAction();
                 let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
+                    self.setStyle();
                     this.isVisible(true);
                     paypal.HostedFields.render({
                         createOrder: function (data, actions) {
@@ -69,6 +72,11 @@ define(
                                 'height': '10px',
                                 'outline': '1px solid'
                             },
+                            '#card-number' : {
+                                'height':'30px',
+                                'width':'200px',
+                                'border':'1px solid #999'
+                            },
                             ':focus': {
                                 'color': 'black'
                             },
@@ -91,6 +99,11 @@ define(
                             }
                         }
                     }).then(function (hf) {
+                        let a = document.getElementById('braintree-hosted-field-expirationDate')
+                        let b = a.contentWindow
+                        let c =         b.document
+                        a.css('width', '50px');
+
                         document.querySelector('#' + self.getCode() + '-form').addEventListener('submit', event => {
                             event.preventDefault();
                             fullScreenLoader.stopLoader();

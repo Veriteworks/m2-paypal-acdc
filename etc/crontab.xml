@@ -2,7 +2,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="veriteworks_paypal">
         <job instance="Veriteworks\Paypal\Cron\Token" method="execute" name="veriteworks_paypal-token">
-            <schedule>* */5 * * *</schedule>
+            <schedule>* */4 * * *</schedule>
         </job>
     </group>
 </config>

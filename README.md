@@ -18,11 +18,5 @@ You can set the options from the Admin of your site.
 
 1. Go to STORES / SALES / Payment Methods / Veriteworks Paypal
 2. Set "Enabled" to "Yes"
-3. Set the Merchant ID, the Merchant Password, the Auth Type, the Use 3D Secure and the Access Token (is mentioned below.).
-
-### Access Token
-A new Access Token is retrieved every 5 hours.
-When installing this module for the first time, you can run the cron as below.
-```bash
-bin/magento cron:run --group veriteworks_paypal
-```
+3. Set the Merchant ID, the Merchant Password, the Auth Type and the Use 3D Secure.
+4. Press the "Get Token" button to get an access token.(Only the first time. It's retrieved every 4 hours.)
