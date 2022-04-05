@@ -19,4 +19,4 @@ You can set the options from the Admin of your site.
 1. Go to STORES / SALES / Payment Methods / Veriteworks Paypal
 2. Set "Enabled" to "Yes"
 3. Set the Merchant ID, the Merchant Password, the Auth Type and the Use 3D Secure.
-4. Press the "Get Token" button to get an access token.(Only the first time. It's retrieved every 4 hours.)
+   (Access Token will be automatically retrieved.)
