@@ -20,7 +20,7 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <button value="paypal form" id="paypalForm" class="btn" data-bind="click: paypalForm">Pay with Card</button>
+        <button value="paypal form" id="paypalForm" class="btn" data-bind="click: paypalForm, attr: {id: getCode() + '-form-button'}">Pay with Card</button>
         <form data-bind="visible: isVisible(), attr: {id: getCode() + '-form'}">
             <label for="card-number">Card Number</label>
             <div id="card-number"></div>
@@ -28,7 +28,7 @@
             <label for="expiration-date">Expiration Date</label>
             <div id="expiration-date"></div>
 
-            <label for="cvv">CVV</label>
+            <label for="cvv">Security Code</label>
             <div id="cvv"></div>
 
             <div class="actions-toolbar">

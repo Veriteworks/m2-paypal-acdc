@@ -68,14 +68,7 @@ define(
                             'input': {
                                 'font-size': '14px',
                                 'font-family': 'Product Sans',
-                                'color': '#3a3a3a',
-                                'height': '10px',
-                                'outline': '1px solid'
-                            },
-                            '#card-number' : {
-                                'height':'30px',
-                                'width':'200px',
-                                'border':'1px solid #999'
+                                'color': '#3a3a3a'
                             },
                             ':focus': {
                                 'color': 'black'
