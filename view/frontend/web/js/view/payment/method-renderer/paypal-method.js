@@ -84,7 +84,7 @@ define(
                             },
                             cvv: {
                                 selector: '#cvv',
-                                placeholder: 'CVV',
+                                placeholder: 'Security Code',
                             },
                             expirationDate: {
                                 selector: '#expiration-date',
