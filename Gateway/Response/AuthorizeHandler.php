@@ -43,9 +43,9 @@ class AuthorizeHandler implements HandlerInterface
         $paymentDO = $this->subjectReader->readPayment($handlingSubject);
         /** @var OrderPaymentInterface $payment */
         $payment = $paymentDO->getPayment();
-        if ($this->getConfig('use_3dsecure')) {
-            $payment->setIsTransactionPending(true);
-        }
+//        if ($this->getConfig('use_3dsecure')) {
+//            $payment->setIsTransactionPending(true);
+//        }
     }
 
     private function getConfig($key, $storeId = null)
