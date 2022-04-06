@@ -20,14 +20,11 @@ define(
                 template: 'Veriteworks_Paypal/payment/paypal'
             },
             isVisible: ko.observable(false),
-            setStyle: function () {
-            },
             paypalForm: function (a,b,c) {
                 let paymentAction = this.getPaymentAction();
                 let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
-                    self.setStyle();
                     this.isVisible(true);
                     paypal.HostedFields.render({
                         createOrder: function (data, actions) {
@@ -48,8 +45,8 @@ define(
                                         dataType: "text",
                                         contentType: "application/json",
                                         success: function (json) {
-                                            let data = eval(json)[0];
-                                            if (!data.err) {
+                                            let data = eval(json);
+                                            if (!data[0].err) {
                                                 defer.resolve(data);
                                             } else {
                                                 self.processError(data);
@@ -62,6 +59,7 @@ define(
                                         }
                                     });
                                 });
+                            let a = defer.promise(this);
                             return defer.promise(this);
                         },
                         styles: {
@@ -92,11 +90,6 @@ define(
                             }
                         }
                     }).then(function (hf) {
-                        let a = document.getElementById('braintree-hosted-field-expirationDate')
-                        let b = a.contentWindow
-                        let c =         b.document
-                        a.css('width', '50px');
-
                         document.querySelector('#' + self.getCode() + '-form').addEventListener('submit', event => {
                             event.preventDefault();
                             fullScreenLoader.stopLoader();
@@ -105,10 +98,8 @@ define(
                                     contingencies: ['SCA_ALWAYS']
                                 }).then(function (payload) {
                                     console.log(payload)
-                                    if (payload['liabilityShift'] === undefined) {
-                                        self.processError({'custom': '3dsecure is not used.'});
-                                    } else if (payload['liabilityShift'] !== 'POSSIBLE') {
-                                        self.processError({'custom': 'An error occurred in 3dsecure.'});
+                                    if (payload['liabilityShift'] === undefined || payload['liabilityShift'] !== 'POSSIBLE') {
+                                        self.processError(payload);
                                     } else {
                                         self.paymentApi(paymentAction, payload);
                                     }
@@ -167,13 +158,8 @@ define(
                     dataType : "text",
                     contentType : "application/json",
                     success: function (json) {
-                        let data = eval(json);
-                        let content = '';
-                        for (const elem of data) {
-                            content += elem + '</br>';
-                        }
                         fullScreenLoader.stopLoader();
-                        alert({content: content});
+                        alert({content: 'Error happened. Please try again later.'});
                         self.isPlaceOrderActionAllowed(true);
                     },
                     error: function (err) {

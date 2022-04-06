@@ -20,7 +20,7 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <button value="paypal form" id="paypalForm" class="btn" data-bind="click: paypalForm, attr: {id: getCode() + '-form-button'}">Pay with Card</button>
+        <button value="paypal form" class="btn" data-bind="click: paypalForm, attr: {id: getCode() + '-form-button'}">Pay with Card</button>
         <form data-bind="visible: isVisible(), attr: {id: getCode() + '-form'}">
             <label for="card-number">Card Number</label>
             <div id="card-number"></div>

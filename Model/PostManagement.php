@@ -122,18 +122,6 @@ class PostManagement
         $this->orderRepository->delete($order);
         $error = $param['error'];
         $this->logger->error(var_export($error, true));
-        $result = [];
-        if (array_key_exists('details', $error)) {
-            foreach ($error['details'] as $elem) {
-                    array_push($result, $elem['description']);
-            }
-        } elseif (array_key_exists('custom', $error)) {
-            array_push($result, $error['custom']);
-        } elseif (array_key_exists('err_intent', $error)) {
-            array_push($result, $error);
-        } else {
-            array_push($result, 'error happened.');
-        }
-        return $result;
+        return $error;
     }
 }
