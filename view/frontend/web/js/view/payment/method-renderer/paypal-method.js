@@ -37,28 +37,28 @@ define(
                                         self.isPlaceOrderActionAllowed(true);
                                     }
                                 ).done(function (res) {
-                                    fullScreenLoader.startLoader();
-                                    $.ajax({
-                                        type: 'POST',
-                                        url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
-                                        data: JSON.stringify({"param": {"orderId": res}}),
-                                        dataType: "text",
-                                        contentType: "application/json",
-                                        success: function (json) {
-                                            let data = eval(json);
-                                            if (!data[0].err) {
-                                                defer.resolve(data);
-                                            } else {
-                                                self.processError(data);
-                                            }
-                                            fullScreenLoader.stopLoader();
-                                        },
-                                        error: function (err) {
-                                            self.processError(err);
-                                            fullScreenLoader.stopLoader();
+                                fullScreenLoader.startLoader();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: url.build('rest/V1/veriteworks-paypal/get-trans-id'),
+                                    data: JSON.stringify({"param": {"orderId": res}}),
+                                    dataType: "text",
+                                    contentType: "application/json",
+                                    success: function (json) {
+                                        let data = eval(json);
+                                        if (!data[0].err) {
+                                            defer.resolve(data);
+                                        } else {
+                                            self.processError(data);
                                         }
-                                    });
+                                        fullScreenLoader.stopLoader();
+                                    },
+                                    error: function (err) {
+                                        self.processError(err);
+                                        fullScreenLoader.stopLoader();
+                                    }
                                 });
+                            });
                             let a = defer.promise(this);
                             return defer.promise(this);
                         },
@@ -97,19 +97,13 @@ define(
                                 hf.submit({
                                     contingencies: ['SCA_ALWAYS']
                                 }).then(function (payload) {
-                                    console.log(payload)
-                                    if (payload['liabilityShift'] === undefined || payload['liabilityShift'] !== 'POSSIBLE') {
-                                        self.processError(payload);
-                                    } else {
-                                        self.paymentApi(paymentAction, payload);
-                                    }
+                                    self.paymentApi(paymentAction, payload, use3DS);
                                 }).catch(function (err) {
                                     self.processError(err);
                                 });
                             } else {
-                                hf.submit().then(function () {
-                                    window.location.replace(url.build('paypal/paypal/send/'));
-                                });
+                                hf.submit().then(function (payload) {
+                                    self.paymentApi(paymentAction, payload, use3DS);                                });
                             }
                         });
                     });
@@ -121,7 +115,7 @@ define(
                     */
                 }
             },
-            paymentApi: function (paymentAction, payload) {
+            paymentApi: function (paymentAction, payload, use3DS) {
                 let self = this;
                 fullScreenLoader.startLoader();
                 $.ajax({
@@ -131,12 +125,17 @@ define(
                     dataType : "text",
                     contentType : "application/json",
                     success: function (json) {
+                        fullScreenLoader.stopLoader();
                         let data = eval(json);
-                        if (data.err_intent !== undefined) {
-                            alert({content: content});
+                        if (data[0].err_intent !== undefined) {
+                            alert({content: 'Error happened. Please try again later.'});
                             self.isPlaceOrderActionAllowed(true);
                         } else {
-                            window.location.replace(url.build('paypal/paypal/send/'));
+                            if (use3DS) {
+                                window.location.replace(url.build('paypal/paypal/sendsecure/'));
+                            } else {
+                                window.location.replace(url.build('paypal/paypal/sendsecure/'));
+                            }
                         }
                     },
                     error: function (err) {
@@ -191,13 +190,13 @@ define(
             getData: function () {
                 var additional;
 
-                    additional = {
-                        'cc_cid': this.creditCardVerificationNumber(),
-                        'cc_exp_year': this.creditCardExpYear(),
-                        'cc_exp_month': this.creditCardExpMonth(),
-                        'cc_number': this.creditCardNumber(),
-                        'token': this.getAccessToken()
-                    };
+                additional = {
+                    'cc_cid': this.creditCardVerificationNumber(),
+                    'cc_exp_year': this.creditCardExpYear(),
+                    'cc_exp_month': this.creditCardExpMonth(),
+                    'cc_number': this.creditCardNumber(),
+                    'token': this.getAccessToken()
+                };
 
                 return {
                     'method': this.item.method,

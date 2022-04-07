@@ -59,6 +59,16 @@ class PostManagement
     public function capture($param)
     {
         $payload = $param['payload'];
+        $use3ds = $this->helperData->getUse3DS();
+        if ($use3ds) {
+            if (!array_key_exists('liabilityShift', $payload) || $payload['liabilityShift'] !== 'POSSIBLE') {
+                return [$this->processError([
+                    'error' => [
+                        'err_intent' => '3ds_err'
+                    ]
+                ])];
+            }
+        }
         $transactionId = $payload['orderId'];
         $apiPath = 'v2/checkout/orders/' . $transactionId. '/capture';
         $params = [
@@ -72,10 +82,12 @@ class PostManagement
             ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
         if (!$result->isValid()) {
-            $this->processError([
-                'err_intent' => 'capture_err',
-                'err_description' => $result->getFailsDescription()
-            ]);
+            $response = [$this->processError([
+                'error' => [
+                    'err_intent' => 'capture_err',
+                    'err_description' => $result->getFailsDescription()
+                    ]
+            ])];
         } else {
             $captureId = $response['id'];
             $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
@@ -100,16 +112,28 @@ class PostManagement
         $response = $this->client
             ->setApiPath($apiPath)->placeRequest($transferO);
         $result = $this->validator->validate(['response' => $response]);
+        $use3ds = $this->helperData->getUse3DS();
         if (!$result->isValid()) {
-            $this->processError([
-                'err_intent' => 'authorize_err',
-                'err_description' => $result->getFailsDescription()
-            ]);
+            $response = [$this->processError([
+                'error' => [
+                    'err_intent' => 'authorize_err',
+                    'err_description' => $result->getFailsDescription()
+                ]
+            ])];
         } else {
             $authId = $response['purchase_units'][0]['payments']['authorizations'][0]['id'];
             $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
             $payment->setAdditionalInformation('auth_id', $authId);
             $payment->save();
+        }
+        if ($use3ds) {
+            if (!array_key_exists('liabilityShift', $payload) || $payload['liabilityShift'] !== 'POSSIBLE') {
+                $response = [$this->processError([
+                    'error' => [
+                        'err_intent' => '3ds_err',
+                    ]
+                ])];
+            }
         }
         return $response;
     }

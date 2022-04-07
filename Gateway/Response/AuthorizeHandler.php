@@ -21,19 +21,15 @@ class AuthorizeHandler implements HandlerInterface
      */
     private $subjectReader;
 
-    private $scopeConfig;
-
     /**
      * Constructor
      *
      * @param SubjectReader $subjectReader
      */
     public function __construct(
-        SubjectReader $subjectReader,
-        ScopeConfigInterface $scopeConfig
+        SubjectReader $subjectReader
     ) {
         $this->subjectReader = $subjectReader;
-        $this->scopeConfig = $scopeConfig;
     }
     /**
      * @inheritdoc
@@ -46,11 +42,5 @@ class AuthorizeHandler implements HandlerInterface
 //        if ($this->getConfig('use_3dsecure')) {
 //            $payment->setIsTransactionPending(true);
 //        }
-    }
-
-    private function getConfig($key, $storeId = null)
-    {
-        $key = 'payment/veriteworks_paypal/' . $key;
-        return $this->scopeConfig->getValue($key, ScopeInterface::SCOPE_STORES, $storeId);
     }
 }
