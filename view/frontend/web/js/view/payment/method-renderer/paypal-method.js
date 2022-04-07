@@ -20,12 +20,16 @@ define(
                 template: 'Veriteworks_Paypal/payment/paypal'
             },
             isVisible: ko.observable(false),
+            use3DSMessage: ko.observable(false),
             paypalForm: function (a,b,c) {
                 let paymentAction = this.getPaymentAction();
                 let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
                     this.isVisible(true);
+                    if (use3DS) {
+                        this.use3DSMessage(true);
+                    }
                     paypal.HostedFields.render({
                         createOrder: function (data, actions) {
                             self.isPlaceOrderActionAllowed(false);
@@ -139,6 +143,7 @@ define(
                         }
                     },
                     error: function (err) {
+                        fullScreenLoader.stopLoader();
                         self.processError(err);
                     },
                     always: function () {

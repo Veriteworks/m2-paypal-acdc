@@ -23,6 +23,7 @@
         <button value="paypal form" class="btn" data-bind="click: paypalForm, attr: {id: getCode() + '-form-button'}">Pay with Card</button>
         <form data-bind="visible: isVisible(), attr: {id: getCode() + '-form'}">
             <label for="card-number">Card Number</label>
+            <p class="use-3DS-message" data-bind="visible: use3DSMessage(), i18n: 'JCB is not supported.'"></p>
             <div id="card-number"></div>
 
             <label for="expiration-date">Expiration Date</label>
