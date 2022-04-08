@@ -89,7 +89,8 @@ class PostManagement
                     ]
             ])];
         } else {
-            $captureId = $response['id'];
+            $captureId = $response['purchase_units'][0]['payments']['captures'][0]['id'];
+            $this->logger->debug(var_export($captureId, true));
             $payment = $this->paymentFactory->create()->load($transactionId, 'cc_trans_id');
             $payment->setAdditionalInformation('capture_id', $captureId);
             $payment->save();
