@@ -6,6 +6,7 @@ use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Veriteworks\Paypal\Logger\Logger;
+use Magento\Framework\App\Cache\TypeListInterface;
 
 class Token
 {
@@ -26,13 +27,17 @@ class Token
 
     protected $apiPath;
 
+    protected $cacheTypeList;
+
     public function __construct(
         WriterInterface $configWriter,
         Logger $logger,
+        TypeListInterface $cacheTypeList,
         ScopeConfigInterface $scopeConfig
     ) {
         $this->configWriter = $configWriter;
         $this->logger = $logger;
+        $this->cacheTypeList = $cacheTypeList;
         $this->scopeConfig = $scopeConfig;
     }
 
@@ -80,6 +85,7 @@ class Token
         }
 
         $this->configWriter->save('payment/veriteworks_paypal/access_token', $returnValue['access_token']);
+        $this->cacheTypeList->cleanType('config');
     }
 
     public function setApiPath($path)

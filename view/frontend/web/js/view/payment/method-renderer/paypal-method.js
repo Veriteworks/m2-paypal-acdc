@@ -138,7 +138,7 @@ define(
                             if (use3DS) {
                                 window.location.replace(url.build('paypal/paypal/sendsecure/'));
                             } else {
-                                window.location.replace(url.build('paypal/paypal/sendsecure/'));
+                                window.location.replace(url.build('paypal/paypal/send/'));
                             }
                         }
                     },
