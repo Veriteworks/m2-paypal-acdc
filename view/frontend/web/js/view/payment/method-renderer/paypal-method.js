@@ -26,7 +26,6 @@ define(
                 let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
-                    self.isPlaceOrderActionAllowed(false);
                     this.isVisible(true);
                     if (use3DS) {
                         this.use3DSMessage(true);
