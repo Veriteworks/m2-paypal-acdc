@@ -83,6 +83,9 @@ class VoidCommand implements CommandInterface
         $order = $paymentDo->getOrder();
         $payment = $paymentDo->getPayment();
         $authId = $payment->getAdditionalInformation('auth_id');
+        if ($authId === null) {
+            return;
+        }
         $apiPath = 'v2/payments/authorizations/' . $authId . '/void';
         $storeId = $order->getStoreId();
         $response = $this->client

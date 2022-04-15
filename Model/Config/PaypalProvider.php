@@ -41,7 +41,6 @@ class PaypalProvider implements ConfigProviderInterface
                     self::CODE => [
                         'client_id' => $this->dataHelper->getClientId($storeId),
                         'password' => $this->dataHelper->getPassword($storeId),
-                        'access_token' => $this->dataHelper->getAccessToken($storeId),
                         'payment_action' => $this->dataHelper->getPaymentAction($storeId),
                         'use_3dsecure' => $this->dataHelper->getUse3DS($storeId),
                         'availableTypes' => [self::CODE => $this->ccConfig->getCcAvailableTypes()],

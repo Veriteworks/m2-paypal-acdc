@@ -83,6 +83,9 @@ class RefundCommand implements CommandInterface
         $order = $paymentDo->getOrder();
         $payment = $paymentDo->getPayment();
         $captureId = $payment->getAdditionalInformation('capture_id');
+        if ($captureId === null) {
+            return;
+        }
         $apiPath = 'v2/payments/captures/' . $captureId . '/refund';
         $storeId = $order->getStoreId();
         $response = $this->client

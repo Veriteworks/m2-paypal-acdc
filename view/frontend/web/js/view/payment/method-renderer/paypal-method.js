@@ -26,6 +26,7 @@ define(
                 let use3DS = this.getUse3DS();
                 if (paypal.HostedFields.isEligible() === true) {
                     var self = this;
+                    self.isPlaceOrderActionAllowed(false);
                     this.isVisible(true);
                     if (use3DS) {
                         this.use3DSMessage(true);
@@ -94,6 +95,18 @@ define(
                             }
                         }
                     }).then(function (hf) {
+                        if (use3DS) {
+                            hf.on('cardTypeChange', function (event) {
+                                if (event.cards.length === 1) {
+                                    if (event.cards[0].type === 'jcb') {
+                                        self.isPlaceOrderActionAllowed(false);
+                                        alert({content:'JCB NOT SUPPORTED.'});
+                                    } else {
+                                        self.isPlaceOrderActionAllowed(true);
+                                    }
+                                }
+                            });
+                        }
                         document.querySelector('#' + self.getCode() + '-form').addEventListener('submit', event => {
                             event.preventDefault();
                             fullScreenLoader.stopLoader();
@@ -107,12 +120,14 @@ define(
                                 });
                             } else {
                                 hf.submit().then(function (payload) {
-                                    self.paymentApi(paymentAction, payload, use3DS);                                });
+                                    self.paymentApi(paymentAction, payload, use3DS);
+                                }).catch(function (err) {
+                                    self.processError(err);
+                                });
                             }
                         });
                     });
-                }
-                else {
+                } else {
                     /*
                     * Handle experience when
                     * Custom Card Fields is not eligible
@@ -199,8 +214,7 @@ define(
                     'cc_cid': this.creditCardVerificationNumber(),
                     'cc_exp_year': this.creditCardExpYear(),
                     'cc_exp_month': this.creditCardExpMonth(),
-                    'cc_number': this.creditCardNumber(),
-                    'token': this.getAccessToken()
+                    'cc_number': this.creditCardNumber()
                 };
 
                 return {
@@ -215,10 +229,6 @@ define(
             getPassword: function () {
                 return window.checkoutConfig.payment.veriteworks_paypal.password;
             },
-            getAccessToken: function () {
-                return window.checkoutConfig.payment.veriteworks_paypal.access_token;
-            },
-
             getPaymentAction: function () {
                 let action = window.checkoutConfig.payment.veriteworks_paypal.payment_action;
                 if (action === 'authorize') {
