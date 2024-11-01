@@ -97,12 +97,7 @@ define(
                         if (use3DS) {
                             hf.on('cardTypeChange', function (event) {
                                 if (event.cards.length === 1) {
-                                    if (event.cards[0].type === 'jcb') {
-                                        self.isPlaceOrderActionAllowed(false);
-                                        alert({content:'JCB NOT SUPPORTED.'});
-                                    } else {
                                         self.isPlaceOrderActionAllowed(true);
-                                    }
                                 }
                             });
                         }
@@ -145,6 +140,7 @@ define(
                     success: function (json) {
                         fullScreenLoader.stopLoader();
                         let data = eval(json);
+                        console.log(data)
                         if (data[0].err_intent !== undefined) {
                             alert({content: 'Error happened. Please try again later.'});
                             self.isPlaceOrderActionAllowed(true);
@@ -169,6 +165,7 @@ define(
             processError: function (err) {
                 fullScreenLoader.startLoader();
                 let self = this;
+                console.log(err)
                 $.ajax({
                     type: 'POST',
                     url: url.build('rest/V1/veriteworks-paypal/process-error'),
